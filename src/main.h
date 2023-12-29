@@ -1,0 +1,6 @@
+typedef enum RESPONSES {
+  UNAUTHORIZED = 401,
+  NOT_FOUND = 404,
+  NO_METHOD = 405,
+  SUCCESS_200 = 200,
+};
