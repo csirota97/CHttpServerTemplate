@@ -17,6 +17,7 @@
 #include "routers/TestRouter1.c" // REPLACE WITH CUSTOM ROUTERS
 #include "routers/TestRouter2.c" // REPLACE WITH CUSTOM ROUTERS
 #include "routers/TestRouter3.c" // REPLACE WITH CUSTOM ROUTERS
+#include "routers/TestRouter4.c" // REPLACE WITH CUSTOM ROUTERS
 
 
 void insertRouter(struct Router *firstRouter, struct Router *newRouter)
@@ -46,29 +47,23 @@ int processRequest(char* buffer, struct Router initialRouter, char *retString)
   sscanf(buffer, "%s %s %s\r\n%s", method, uri, version, overflow);
   strcpy(requestCopy, buffer);
   char *authn = getHeader(buffer, AUTH_LABEL);
-    printf("11\n");
 
   strcpy(buffer, requestCopy);
-    printf("12\n");
 
   if (isAuthKeyValid(authn) == 0)
   {
-    // free(authn);
     return UNAUTHORIZED;
   }
-  // free(authn);
-    printf("6\n");
-
 
   struct Router *routerPtr = &initialRouter;
   int routeFound = 0;
   int methodValid = 0;
-  while (routerPtr != NULL && routeFound < 1)
-  {
+  while (routerPtr != NULL && methodValid < 1)
+  { 
     if (isURIOnRoute(routerPtr[0].path, uri) == 1)
     {
       routeFound = 1;
-      for (int i = 0; i < METHOD_COUNT && methodValid < 1; i++)
+      for (int i = 0; i < routerPtr[0].methodsCount && methodValid < 1; i++)
       {
         struct Route *curRoute = &routerPtr->routes[i];
         if (curRoute[0].method != NULL && strcmp(curRoute[0].method, method) == 0)
@@ -104,6 +99,8 @@ int processRequest(char* buffer, struct Router initialRouter, char *retString)
 int writeResponse(int successStatus, int newsockfd, char *responseString)
 {
   int valwrite = 0;
+  char *resp_200_copy = malloc(strlen(resp_200));
+
   switch (successStatus)
   {
     case UNAUTHORIZED:
@@ -118,21 +115,12 @@ int writeResponse(int successStatus, int newsockfd, char *responseString)
       break;
 
     default:
-    // case SUCCESS_200:
-      printf("hjhjhjhjh\n");
-      char *resp_200_copy = malloc(sizeof(resp_200));
-      printf("PPP\n");
-      strcpy(resp_200_copy, resp_200);
-      printf("QQQ\n%s\n-----\n%s\n", resp_200_copy, responseString);
-      strlcatt(resp_200_copy, responseString, sizeof(char)* (strlen(resp_200_copy) + strlen(responseString) + 1));
-      printf("RRR\n%s\n", resp_200_copy);
+      strlcpy(resp_200_copy, resp_200, sizeof(char)* (strlen(resp_200)+1));
+      strlcat(resp_200_copy, responseString, sizeof(char)* (strlen(resp_200_copy) + strlen(responseString) + 1));
       valwrite = write(newsockfd, resp_200_copy, strlen(resp_200_copy));
-      printf("SSS\n");
       printf("Connection authenticated\n");
       
       break;
-    // default:
-    //   break;
   }
   if (valwrite < 0)
   {
@@ -140,10 +128,7 @@ int writeResponse(int successStatus, int newsockfd, char *responseString)
     return valwrite;
   }
 
-  printf("OOOO\n");
   close(newsockfd);
-  printf("OOOO\n");
-  printf("valWrite %d\n", valwrite);
   return valwrite;
 }
 
@@ -159,6 +144,7 @@ int main(int argc, char *argv[]) {
   memcpy(&initialRouter, &firstRouter, sizeof(firstRouter)); //REPLACE firstRouter with custom router
   insertRouter(&initialRouter, &secondRouter); //Duplicate this line, and replace secondRouterr with additional custom routers, or delete line
   insertRouter(&initialRouter, &thirdRouter); //Duplicate this line, and replace secondRouterr with additional custom routers, or delete line
+  insertRouter(&initialRouter, &fourthRouter); //Duplicate this line, and replace secondRouterr with additional custom routers, or delete line
 
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd == -1) {
@@ -195,24 +181,19 @@ int main(int argc, char *argv[]) {
 
   for (;;)
   {
-    printf("%d\n", 1);
     char buffer[BUFFER_SIZE];
-    printf("%d\n", 2);
     for (int i = 0; i<BUFFER_SIZE; i++)
     {
       buffer[i] = '\0';
     }
-    printf("%d\n", 3);
 
     int newsockfd = accept(sockfd, (struct sockaddr *)&host_addr, (socklen_t *)&host_addrlen);
-    printf("%d\n", 4);
     if (newsockfd < 0)
     {
       perror("webserver (accept)");
       continue;
     }
     printf("connection accepted\n");
-    printf("%d\n", 5);
 
     int sockn = getsockname(newsockfd, (struct sockaddr *)&client_addr,
                             (socklen_t *)&client_addrlen);
@@ -220,7 +201,6 @@ int main(int argc, char *argv[]) {
         perror("webserver (getsockname)");
         continue;
     }
-    printf("%d\n", 6);
 
     int valread = read(newsockfd, buffer, BUFFER_SIZE);
     if (valread < 0)
@@ -228,15 +208,10 @@ int main(int argc, char *argv[]) {
       perror("webserver (read)");
       continue;
     }
-    printf("%d\n", 7);
 
-    printf("plplplplplplp\n");
     char *responseString = malloc(BUFFER_SIZE);
-    printf("plplplplplplp\n");
     int successStatus = processRequest(buffer, initialRouter, responseString);
     int valwrite = writeResponse(successStatus, newsockfd, responseString);
-    free(responseString);
-    printf("ppppp\n%d\n", valwrite);
     if (valwrite < 0)
     {
       continue;

@@ -3,6 +3,8 @@
 - Create new file in `src/routers` directory
   - Define handler function with return type `char *`
     - Handler should accept 1 parameter `const char **args`
+  - A router, by default, can accept 6 methods
+    - If a path requires more than 6 HTTP methods, subsequent HTTP methods can be defined in a new router with the same path.
 
   - Sample router definition below:
 
@@ -23,6 +25,7 @@ char *r1DELETE(const char **args) {
 }
 
 struct Router sampleRouter = {
+  3, // COUNT OF METHODS AVAILABLE ON PATH
   {
     {
       "GET", // HTTP METHOD

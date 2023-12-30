@@ -7,4 +7,4 @@ clean:
 	rm src/*.o
 
 main: src/main.c
-	gcc  src/main.c -o src/main.o
+	gcc src/main.c -o src/main.o -std=c11

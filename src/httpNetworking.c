@@ -5,41 +5,25 @@
 
 char *getHeader(const char *requestHeaderLines, const char *headerToFind)
 {
-    printf("q\n");
     char *headerValue = malloc(BUFFER_SIZE);
-    printf("w\n");
     char *line = malloc(BUFFER_SIZE);
-    printf("1\n");
     line = strtok(requestHeaderLines, "\r\n");
-    printf("2\n");
 
     while (line != NULL)
     {
-    printf("3\n");
 
       if (strcasestr(line, headerToFind) != 0)
       {
-    printf("4\n");
 
         headerValue = strtok(line, ": ");
-    printf("5\n");
         headerValue = strtok(NULL, ": ");
-    printf("6\n");
-        // free(line);
-    printf("6\n");
-        // return headerValue;
         break;
       }
       else 
       {
-    printf("7\n");
         line = strtok(NULL, "\r\n");
-    printf("8\n");
       }
     }
-    printf("9\n");
-    // free(line);
-    printf("10\n");
     return headerValue;
 }
 
@@ -49,9 +33,7 @@ int isURIOnRoute(char *path, char *uri)
   {
     return 1;
   }
-  printf("e\n");
   char *uriC = malloc(sizeof uri);
-  printf("r\n");
   char *pathC = malloc(sizeof path);
   strcpy(uriC, uri);
   strcpy(pathC, path);
@@ -80,12 +62,6 @@ int isURIOnRoute(char *path, char *uri)
   {
     retVal = 0;
   }
-  // free(uriC);
-  // free(pathC);
-  // free(uriSavePointer);
-  // free(pathSavePointer);
-  // free(uriTokens);
-  // free(pathTokens);
   
   return retVal;
 }

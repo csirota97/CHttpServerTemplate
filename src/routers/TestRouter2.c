@@ -21,6 +21,7 @@ char *r2DELETE(const char **args) {
 
 
 struct Router secondRouter = {
+  4,
   {
     {
       "GET",
