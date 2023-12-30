@@ -49,16 +49,11 @@ int processRequest(char* buffer, struct Router initialRouter, char *retString)
   char *authn = getHeader(buffer, AUTH_LABEL);
 
   strcpy(buffer, requestCopy);
-    printf("12\n");
 
   if (isAuthKeyValid(authn) == 0)
   {
-    // free(authn);
     return UNAUTHORIZED;
   }
-  // free(authn);
-    printf("6\n");
-
 
   struct Router *routerPtr = &initialRouter;
   int routeFound = 0;
@@ -134,8 +129,6 @@ int writeResponse(int successStatus, int newsockfd, char *responseString)
   }
 
   close(newsockfd);
-  printf("OOOO\n");
-  printf("valWrite %d\n", valwrite);
   return valwrite;
 }
 
@@ -188,24 +181,19 @@ int main(int argc, char *argv[]) {
 
   for (;;)
   {
-    printf("%d\n", 1);
     char buffer[BUFFER_SIZE];
-    printf("%d\n", 2);
     for (int i = 0; i<BUFFER_SIZE; i++)
     {
       buffer[i] = '\0';
     }
-    printf("%d\n", 3);
 
     int newsockfd = accept(sockfd, (struct sockaddr *)&host_addr, (socklen_t *)&host_addrlen);
-    printf("%d\n", 4);
     if (newsockfd < 0)
     {
       perror("webserver (accept)");
       continue;
     }
     printf("connection accepted\n");
-    printf("%d\n", 5);
 
     int sockn = getsockname(newsockfd, (struct sockaddr *)&client_addr,
                             (socklen_t *)&client_addrlen);
@@ -213,7 +201,6 @@ int main(int argc, char *argv[]) {
         perror("webserver (getsockname)");
         continue;
     }
-    printf("%d\n", 6);
 
     int valread = read(newsockfd, buffer, BUFFER_SIZE);
     if (valread < 0)
@@ -221,7 +208,6 @@ int main(int argc, char *argv[]) {
       perror("webserver (read)");
       continue;
     }
-    printf("%d\n", 7);
 
     char *responseString = malloc(BUFFER_SIZE);
     int successStatus = processRequest(buffer, initialRouter, responseString);
