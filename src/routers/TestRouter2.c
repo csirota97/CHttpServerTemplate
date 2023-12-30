@@ -20,7 +20,7 @@ char *r2DELETE(const char **args) {
 }
 
 
-struct Router secondRoute = {
+struct Router secondRouter = {
   {
     {
       "GET",
