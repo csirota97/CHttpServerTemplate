@@ -2,7 +2,7 @@
 
 char *r1GET(const char **args) {
   printf("Hello World\nROUTE 1 GET, %s\n", args[0]);
-  return "HELLO";
+  return "<html><body><h1>HELLO</h1></body></html>";
 }
 
 char *r1POST(const char **args) {
@@ -16,7 +16,8 @@ char *r1DELETE(const char **args) {
 }
 
 
-struct Router firstRoute = {
+struct Router firstRouter = {
+  3,
   {
     {
       "GET",

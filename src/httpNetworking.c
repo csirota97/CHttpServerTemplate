@@ -11,11 +11,13 @@ char *getHeader(const char *requestHeaderLines, const char *headerToFind)
 
     while (line != NULL)
     {
+
       if (strcasestr(line, headerToFind) != 0)
       {
+
         headerValue = strtok(line, ": ");
         headerValue = strtok(NULL, ": ");
-        return headerValue;
+        break;
       }
       else 
       {
@@ -60,12 +62,6 @@ int isURIOnRoute(char *path, char *uri)
   {
     retVal = 0;
   }
-  // free(uriC);
-  // free(pathC);
-  // free(uriSavePointer);
-  // free(pathSavePointer);
-  // free(uriTokens);
-  // free(pathTokens);
   
   return retVal;
 }

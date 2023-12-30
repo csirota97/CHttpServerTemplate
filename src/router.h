@@ -9,7 +9,8 @@ typedef struct Route {
 
 typedef struct Router
 {
-  struct Route routes[METHOD_COUNT];
-  char *path; 
+  int methodsCount; 
+  struct Route routes[6];
+  char *path;
   struct Router *nextRouter;
 };
