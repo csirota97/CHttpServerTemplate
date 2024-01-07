@@ -1,21 +1,21 @@
 // DELETE THIS FILE
-char *r3GET(const char **args) {
-  printf("Hello World\nROUTE 3 GET, %s\n", args[0]);
+char *r3GET(char *uri, int paramCount, char paramsArr[paramCount][2][strlen(uri)], int contentLength, char *content) {
+  printf("Hello World\nROUTE 3 GET");
   return "HELLO";
 }
 
-char *r3POST(const char **args) {
-  printf("Hello World\nROUTE 3 POST, %s\n", args[0]);
+char *r3POST(char *uri, int paramCount, char paramsArr[paramCount][2][strlen(uri)], int contentLength, char *content) {
+  printf("Hello World\nROUTE 3 POST");
   return "HELLO";
 }
 
-char *r3PUT(const char **args) {
-  printf("Hello World\nROUTE 3 PUT, %s\n", args[0]);
+char *r3PUT(char *uri, int paramCount, char paramsArr[paramCount][2][strlen(uri)], int contentLength, char *content) {
+  printf("Hello World\nROUTE 3 PUT");
   return "HELLO";
 }
 
-char *r3DELETE(const char **args) {
-  printf("Hello World\nROUTE 3 DELETE, %s\n", args[0]);
+char *r3DELETE(char *uri, int paramCount, char paramsArr[paramCount][2][strlen(uri)], int contentLength, char *content) {
+  printf("Hello World\nROUTE 3 DELETE");
   return "HELLO";
 }
 

@@ -40,37 +40,87 @@ int isAuthKeyValid(char *authn)
   return 1;
 }
 
+char *getRequestContent(char* buffer)
+{
+  char bufferCopy[BUFFER_SIZE], content[BUFFER_SIZE];
+  strcpy(bufferCopy, buffer);
+  int contentLength = atoi(getHeader(buffer, CONTENT_LENGTH_LABEL));
+  strcpy(buffer, bufferCopy);
+  
+  if (contentLength == 0)
+  {
+    return "";
+  }
+
+  strncpy(content, buffer+(strlen(buffer) - contentLength), contentLength);
+  content[contentLength] = '\0';
+  return content;
+}
+
 int processRequest(char* buffer, struct Router initialRouter, char *retString)
 {
-  char method[BUFFER_SIZE], uri[BUFFER_SIZE], version[BUFFER_SIZE], authLabel[BUFFER_SIZE], requestCopy[BUFFER_SIZE], overflow[BUFFER_SIZE];
+  char method[BUFFER_SIZE], uri[BUFFER_SIZE], version[BUFFER_SIZE], authLabel[BUFFER_SIZE], bufferCopy[BUFFER_SIZE], overflow[BUFFER_SIZE];
 
   sscanf(buffer, "%s %s %s\r\n%s", method, uri, version, overflow);
-  strcpy(requestCopy, buffer);
+  strcpy(bufferCopy, buffer);
   char *authn = getHeader(buffer, AUTH_LABEL);
 
-  strcpy(buffer, requestCopy);
+  strcpy(buffer, bufferCopy);
 
   if (isAuthKeyValid(authn) == 0)
   {
     return UNAUTHORIZED;
   }
 
+  //Control setup
   struct Router *routerPtr = &initialRouter;
   int routeFound = 0;
   int methodValid = 0;
+  char uriBackup[strlen(uri)];
+  strcpy(uriBackup, uri);
+  // Extract request parameters
+  int paramsCount = getParamCount(uri);
+  char paramsStr[strlen(uri)];
+  int hasParams = 0;
+  for (int i = 0; i < strlen(uri); i++) {
+    if (uri[i] == '?') {
+      strncpy(paramsStr, uri+i+1, strlen(uri)-i);
+      hasParams = 1;
+      break;
+    }
+  }
+  int paramsArrStrLength = (hasParams == 1) ? strlen(paramsStr) : 0;
+  char paramsArr[paramsCount][2][paramsArrStrLength];
+
+  if (paramsCount > 0)
+  {
+    getParams(uri, paramsCount, paramsArr);
+  }
+
+
+  // Check if request is pointed to a valid API
   while (routerPtr != NULL && methodValid < 1)
   { 
+    // Is route valid
     if (isURIOnRoute(routerPtr[0].path, uri) == 1)
     {
       routeFound = 1;
       for (int i = 0; i < routerPtr[0].methodsCount && methodValid < 1; i++)
       {
+        // Is method valid
         struct Route *curRoute = &routerPtr->routes[i];
         if (curRoute[0].method != NULL && strcmp(curRoute[0].method, method) == 0)
         {
           methodValid = 1;
-          const char *argsp[10] = {"TEST ARGS"};
-          char *response = curRoute[0].handler(argsp);
+          char* content = getRequestContent(buffer);
+          char *response = curRoute[0].handler(
+            uri, // URI
+            sizeof(paramsArr)/sizeof(paramsArr[0]), // number of request parameters
+            paramsArr, // request parameters - [array [param components [key string][value string]]]
+            strlen(content), // length of body
+            content // body
+          );
+
           realloc(retString, strlen(response)+1);
           for (int j = 0; j < strlen(response) + 1; j++)
           {
@@ -80,6 +130,7 @@ int processRequest(char* buffer, struct Router initialRouter, char *retString)
         } 
       }
     }
+
     routerPtr = routerPtr->nextRouter;
   }
 

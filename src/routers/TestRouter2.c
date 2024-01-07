@@ -1,21 +1,21 @@
 // DELETE THIS FILE
-char *r2GET(const char **args) {
-  printf("Hello World\nROUTE 2 GET, %s\n", args[0]);
+char *r2GET(char *uri, int paramCount, char paramsArr[paramCount][2][strlen(uri)], int contentLength, char *content) {
+  printf("Hello World\nROUTE 2 GET");
   return "HELLO";
 }
 
-char *r2POST(const char **args) {
-  printf("Hello World\nROUTE 2 POST, %s\n", args[0]);
+char *r2POST(char *uri, int paramCount, char paramsArr[paramCount][2][strlen(uri)], int contentLength, char *content) {
+  printf("Hello World\nROUTE 2 POST");
   return "HELLO";
 }
 
-char *r2PUT(const char **args) {
-  printf("Hello World\nROUTE 2 PUT, %s\n", args[0]);
+char *r2PUT(char *uri, int paramCount, char paramsArr[paramCount][2][strlen(uri)], int contentLength, char *content) {
+  printf("Hello World\nROUTE 2 PUT");
   return "HELLO";
 }
 
-char *r2DELETE(const char **args) {
-  printf("Hello World\nROUTE 2 DELETE, %s\n", args[0]);
+char *r2DELETE(char *uri, int paramCount, char paramsArr[paramCount][2][strlen(uri)], int contentLength, char *content) {
+  printf("Hello World\nROUTE 2 DELETE");
   return "HELLO";
 }
 
